@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"git.shangtai.net/staffan/go-ico"
 	"github.com/spf13/pflag"
+	"github.com/typomedia/ico"
 	"golang.org/x/image/draw"
 )
 
@@ -71,7 +71,7 @@ func main() {
 
 	icon := ico.NewIcon()
 	// https://learn.microsoft.com/en-us/windows/win32/uxguide/vis-icons
-	sizes := []int{128, 256}
+	sizes := []int{16, 24, 32, 48, 64, 128, 256}
 	for _, size := range sizes {
 		resizedImg := scale(alpha, size, size)
 		icon.AddPng(resizedImg)
