@@ -11,19 +11,29 @@ import (
 	"time"
 
 	"git.shangtai.net/staffan/go-ico"
+	"github.com/spf13/pflag"
 	"golang.org/x/image/draw"
 )
 
 func main() {
+	var (
+		input  string
+		output string
+	)
+
+	pflag.StringVarP(&output, "out", "o", "", "output ico file")
+	pflag.Parse()
+
+	if len(pflag.Args()) < 1 {
+		os.Exit(1)
+	}
+
+	input = pflag.Arg(0)
+	fmt.Println("Input:", input)
 
 	start := time.Now()
 
-	if len(os.Args) < 2 {
-		os.Exit(1)
-	}
-	path := os.Args[1]
-
-	file, err := os.ReadFile(path)
+	file, err := os.ReadFile(input)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -47,8 +57,13 @@ func main() {
 			Y: (size - img.Bounds().Dy()) / 2,
 		}), img, image.Point{}, draw.Over)
 
-	basename := name(path)
-	icoFile, err := os.Create(basename + ".ico")
+	basename := name(input) + ".ico"
+	if output != "" {
+		basename = output
+	}
+	fmt.Println("Output:", basename)
+
+	icoFile, err := os.Create(basename)
 	if err != nil {
 		log.Fatal(err)
 	}
