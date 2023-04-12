@@ -19,7 +19,15 @@
 
 ## Example
 
-    iconize -o icon.ico icon.png
+    iconize icon.png
+    Input: icon.png
+    Output: icon.ico
+    Elapsed: 9.676ms
+
+    iconize icon.png -o test.ico
+    Input: icon.png
+    Output: test.ico
+    Elapsed: 10.7743ms
 
 ## Test
 
