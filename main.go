@@ -71,7 +71,7 @@ func main() {
 
 	icon := ico.NewIcon()
 	// https://learn.microsoft.com/en-us/windows/win32/uxguide/vis-icons
-	sizes := []int{16, 24, 32, 48, 64, 128, 256}
+	sizes := []int{256, 128, 64, 48, 32, 24, 16}
 	for _, size := range sizes {
 		resizedImg := scale(alpha, size, size)
 		icon.AddPng(resizedImg)
