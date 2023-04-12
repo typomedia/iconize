@@ -21,5 +21,16 @@
 
     iconize -o icon.ico icon.png
 
+## Test
+
+    icotool -l icon.ico 
+    --icon --index=1 --width=256 --height=256 --bit-depth=32 --palette-size=0
+    --icon --index=2 --width=128 --height=128 --bit-depth=32 --palette-size=0
+    --icon --index=3 --width=64 --height=64 --bit-depth=32 --palette-size=0
+    --icon --index=4 --width=48 --height=48 --bit-depth=32 --palette-size=0
+    --icon --index=5 --width=32 --height=32 --bit-depth=32 --palette-size=0
+    --icon --index=6 --width=24 --height=24 --bit-depth=32 --palette-size=0
+    --icon --index=7 --width=16 --height=16 --bit-depth=32 --palette-size=0
+
 ---
 Copyright © 2023 Typomedia Foundation. All rights reserved.
