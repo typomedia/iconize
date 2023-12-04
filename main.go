@@ -3,42 +3,49 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"image"
-	"image/color"
-	"log"
-	"os"
-	"path/filepath"
-	"time"
-
 	"github.com/spf13/pflag"
 	"github.com/typomedia/ico"
 	"golang.org/x/image/draw"
+	"image"
+	"image/color"
+	"io"
+	"log"
+	"os"
+	"path/filepath"
 )
 
 func main() {
 	var (
-		input  string
-		output string
+		input string
+		data  []byte
+		err   error
 	)
 
-	pflag.StringVarP(&output, "out", "o", "", "output ico file")
+	outfile := pflag.StringP("out", "o", "", "outfile ico file")
+	version := pflag.BoolP("version", "V", false, "show version")
 	pflag.Parse()
 
-	if len(pflag.Args()) < 1 {
-		os.Exit(1)
+	if *version {
+		fmt.Println("iconize 0.2.0 <philipp@typo.media>")
+		os.Exit(0)
 	}
 
 	input = pflag.Arg(0)
-	fmt.Println("Input:", input)
+	stat, _ := os.Stdin.Stat()
 
-	start := time.Now()
-
-	file, err := os.ReadFile(input)
+	switch true {
+	case input != "":
+		data, err = os.ReadFile(input)
+	case (stat.Mode() & os.ModeCharDevice) == 0:
+		data, err = io.ReadAll(os.Stdin)
+	default:
+		log.Fatal("no input data given")
+	}
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	img, _, err := image.Decode(bytes.NewReader(file))
+	img, _, err := image.Decode(bytes.NewReader(data))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,7 +55,7 @@ func main() {
 
 	alpha := image.NewRGBA(image.Rect(0, 0, size, size))
 
-	rgba := color.RGBA{0, 0, 0, 0}
+	rgba := color.RGBA{}
 	draw.Draw(alpha, alpha.Bounds(), &image.Uniform{C: rgba}, image.Point{}, draw.Src)
 
 	draw.Draw(alpha, img.Bounds().Add(
@@ -56,18 +63,6 @@ func main() {
 			X: (size - img.Bounds().Dx()) / 2,
 			Y: (size - img.Bounds().Dy()) / 2,
 		}), img, image.Point{}, draw.Over)
-
-	basename := name(input) + ".ico"
-	if output != "" {
-		basename = output
-	}
-	fmt.Println("Output:", basename)
-
-	icoFile, err := os.Create(basename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer icoFile.Close()
 
 	icon := ico.NewIcon()
 	// https://learn.microsoft.com/en-us/windows/win32/uxguide/vis-icons
@@ -77,14 +72,23 @@ func main() {
 		icon.AddPng(resizedImg)
 	}
 
-	t := time.Now()
-	elapsed := t.Sub(start)
-	fmt.Println("Elapsed:", elapsed)
-
 	enc, err := icon.Encode()
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// write to stdout
+	if *outfile == "" {
+		fmt.Println(string(enc))
+		os.Exit(0)
+	}
+
+	// write to file
+	icoFile, err := os.Create(*outfile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer icoFile.Close()
 
 	icoFile.Write(enc)
 	os.Exit(0)
