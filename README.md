@@ -16,18 +16,14 @@
 ## Options
 
     -o, --out string   output ico file
+    -h, --help         display help
+    -V, --version      display version
 
 ## Example
 
-    iconize icon.png
-    Input: icon.png
-    Output: icon.ico
-    Elapsed: 9.676ms
+    iconize icon.png -o icon.ico
 
-    iconize icon.png -o test.ico
-    Input: icon.png
-    Output: test.ico
-    Elapsed: 10.7743ms
+    iconize < icon.png > test.ico
 
 ## Test
 
