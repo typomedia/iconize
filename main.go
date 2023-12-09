@@ -33,7 +33,7 @@ func main() {
 	input = pflag.Arg(0)
 	stat, _ := os.Stdin.Stat()
 
-	switch true {
+	switch {
 	case input != "":
 		data, err = os.ReadFile(input)
 	case (stat.Mode() & os.ModeCharDevice) == 0:
